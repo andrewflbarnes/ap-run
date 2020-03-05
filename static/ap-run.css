@@ -1,12 +1,14 @@
+/* For sticky change main -> body and .footer position to absolute */
+/* For fixed change body -> main and .footer position to fixed */
 html {
   position: relative;
   min-height: 100%;
 }
-body {
+main {
   margin-bottom: 60px; /* Margin bottom by footer height */
 }
 .footer {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   height: 60px;
   line-height: 60px;
