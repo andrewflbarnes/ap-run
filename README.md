@@ -16,3 +16,15 @@ cd mock && json-server
 ```
 
 Then open static/index.html in your favourite browser - simples :)
+
+At the moment this relies on penny-guess (pennyguess.com) to provide the /api/sweepstake endpoint.
+
+This is backed by the below DB table
+```sql
+CREATE TABLE t_aprun_sweepstake
+( name      VARCHAR(255)    PRIMARY KEY NOT NULL
+, runner    VARCHAR(255)                NOT NULL
+, time      VARCHAR(8)                  NOT NULL
+, message   VARCHAR(255)
+);
+```
