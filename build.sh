@@ -10,9 +10,9 @@ cp -Rv src static
 
 echo "Replacing placeholders"
 
-echo "Placeholder: API_URL -> $API_URL"
 for file in $(find static -name "*html")
 do
+  echo "Placeholder: API_URL -> $API_URL in $file"
   sed -i '' '
     s/{{API_URL}}/'$API_URL'/g
   ' $file
