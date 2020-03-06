@@ -13,7 +13,7 @@
       var fetchSweepstakeEntries = function() {
         var resOk = false
         var resStatus = 0
-        fetch('https://www.pennyguess.com/api/sweepstake', {
+        fetch('{{API_URL}}/sweepstake', {
           method: 'GET'
         }).then(function(res) {
           resOk = res.ok
@@ -62,7 +62,7 @@
 
         var resOk = false
         var resStatus = 0
-        fetch('https://www.pennyguess.com/api/sweepstake', {
+        fetch('{{API_URL}}/sweepstake', {
           method: 'POST',
           body: JSON.stringify(jsonData),
           headers: {
