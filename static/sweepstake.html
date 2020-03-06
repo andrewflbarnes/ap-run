@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- custom site css -->
+    <link rel="stylesheet" href="./ap-run.css">
+    <!-- bootstrap 4.4 -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script>
+      var fetchSweepstakeEntries = function() {
+        fetch('http://localhost:3000/sweepstake', {
+          method: 'GET'
+        }).then(function(res) {
+          if (!res.ok) {
+            throw new Error(`Unable to retrieve sweepstakes: ${res.status}/${res.statusText}`)
+          }
+          return res.json();
+        }).then(function(res) {
+          sorted = res.sort(function(a,b) {
+            return new Date('1970/01/01 ' + a.time) - new Date('1970/01/01 ' + b.time);
+          })
+
+          $('#sweepstake-entries').children('tr').remove()
+
+          sorted.forEach(function(entry) {
+            $('#sweepstake-entries').append(`
+              <tr>
+                <td scope="row">${entry.name}</td>
+                <td>${entry.runner}</td>
+                <td>${entry.time}</td>
+                <td>${entry.message}</td>
+              </tr>`
+            )
+          })
+        }).catch(function(error) {
+          $('.error-text').text(error)
+          $('#error-modal').modal('toggle')
+        })
+      }
+    </script>
+    <script>
+      $(document).ready(function() {
+        fetchSweepstakeEntries()
+
+fetch('https://www.pennyguess.com/api/whatis', {
+  method: 'GET'
+}).then(function(res) {
+  console.log(res)
+  if (!res.ok) {
+    throw new Error(`Unable to get whatis: ${res.status}/${res.statusText}`)
+  }
+  return res.json()
+}).then(function(res) {
+  console.log(res)
+}).catch(function(error) {
+  console.error(error)
+  $('.error-text').text(error)
+  $('#error-modal').modal('toggle')
+})
+
+      });
+    </script>
+    <script>
+      function submitSweepstake() {
+        var formData = $("#sweepstake-form").serializeArray();
+        
+        var jsonData = {}
+        formData.forEach(function(entry) {
+          jsonData[entry.name] = entry.value
+        })
+
+        fetch('http://localhost:3000/sweepstake', {
+          method: 'POST',
+          body: JSON.stringify(jsonData),
+          headers: {
+            'content-type': 'application/json'
+          }
+        }).then(function(res) {
+          if (!res.ok) {
+            throw new Error(`Unable to submit sweepstake: ${res.status}/${res.statusText}`)
+          }
+          $("#sweepstake-modal").modal('toggle')
+          fetchSweepstakeEntries()
+          console.log(res)
+        }).catch(function(error) {
+          $('.error-text').text(error)
+          $('#error-modal').modal('toggle')
+        })
+
+      }
+    </script>
+  </head>
+  <body>
+    <main role="main" class="container text-center justify-content-center">
+      <div>
+        <div class="my-5">
+          <h1>26.2 Miles for Salcombe RNLI</h1>
+        </div>
+        <div>
+          <p>Please <a href="https://uk.virginmoneygiving.com/Team/PennyandAndrew">donate</a> to join the sweepstake.
+          </p>
+          <p>
+            If you make a mistake or want to change your time, contact Andrew or Penny and they will fix it for you.
+          </p>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-12">
+            <!-- Button trigger modal -->
+            <button type="button" class="mb-3 btn btn-primary" data-toggle="modal" data-target="#sweepstake-modal">
+              Join the sweepstake!
+            </button>
+
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Name</th>
+                  <th scope="col">Runner</th>
+                  <th scope="col">Time</th>
+                  <th scope="col">Message</th>
+                <tr>
+              </thead>
+              <tbody id="sweepstake-entries">
+              </tbody>
+            </table>
+            
+            <!-- Sweepstake submission modal -->
+            <div class="text-left modal fade" id="sweepstake-modal" tabindex="-1" role="dialog" aria-labelledby="sweepstake-modal-label" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="sweepstake-modal-label">Join Sweepstake</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <form id="sweepstake-form">
+                    <div class="modal-body">
+                          <div class="form-group">
+                            <label for="sweepstake-name" class="col-form-label">Your Name:</label>
+                            <input type="text" class="form-control" id="sweepstake-name" name="name">
+                          </div>
+                          <div class="form-group">
+                            <label for="sweepstake-runner">Runner</label>
+                            <select class="form-control" id="sweepstake-runner" name="runner">
+                              <option>Penny</option>
+                              <option>Andrew</option>
+                            </select>
+                          </div>
+                          <div class="form-group">
+                            <label for="sweepstake-time" class="col-form-label">Time:</label>
+                            <input type="text" class="form-control" id="sweepstake-time" placeholder="HH:MM:SS" name="time">
+                          </div>
+                          <div class="form-group">
+                            <label for="sweepstake-message" class="col-form-label">Message:</label>
+                            <textarea class="form-control" id="sweepstake-message" name="message"></textarea>
+                          </div>
+                    </div>
+                    <div class="modal-footer form-group">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button class="btn btn-primary" type="button" onclick="submitSweepstake()">Submit</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12">&nbsp;</div>
+
+      <!-- Error message modal -->
+      <div class="text-left modal fade" id="error-modal" tabindex="-1" role="dialog" aria-labelledby="error-modal-label" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="error-modal-label">Error</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+              <div class="modal-body">
+                <p class="error-text"></p>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- Sticky footer -->
+    <footer class="footer justify-content-center">
+      <div class="container text-center">
+        <span class="text-muted">
+          <a href="https://uk.virginmoneygiving.com/Team/PennyandAndrew">Donate</a>
+        </span>
+      </div>
+    </footer>
+  </body>
+</html>
