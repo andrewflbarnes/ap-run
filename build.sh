@@ -1,22 +1,19 @@
 #!/usr/bin/env bash
 
-BUILD_ENV=${BUILD_ENV:-development}
+API_URL=${API_URL:-"https:\/\/www.pennyguess.com\/api"}
 
-echo "Build Type: $BUILD_ENV"
-
+echo "Cleaning output folder: static"
 rm -rf static
+
+echo "Copying source files to output folder: src -> static"
 cp -Rv src static
 
-if [[ "$BUILD_ENV" = "production" ]]
-then
-  api_url='https:\/\/www.pennyguess.com\/api'
-else
-  api_url='http:\/\/localhost:3000'
-fi
+echo "Replacing placeholders"
 
+echo "Placeholder: API_URL -> $API_URL"
 for file in $(find static -name "*html")
 do
   sed -i '' '
-    s/{{API_URL}}/'$api_url'/g
+    s/{{API_URL}}/'$API_URL'/g
   ' $file
 done
