@@ -13,7 +13,10 @@ echo "Replacing placeholders"
 for file in $(find static -name "*html")
 do
   echo "Placeholder: API_URL -> $API_URL in $file"
-  sed -i'' '
+  sed -i.delete '
     s/{{API_URL}}/'$API_URL'/g
   ' $file
 done
+
+echo "Deleting all modification backups"
+find static -type f -name "*.delete" -exec rm -v {} +
