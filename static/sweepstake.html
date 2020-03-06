@@ -44,23 +44,6 @@
     <script>
       $(document).ready(function() {
         fetchSweepstakeEntries()
-
-fetch('https://www.pennyguess.com/api/whatis', {
-  method: 'GET'
-}).then(function(res) {
-  console.log(res)
-  if (!res.ok) {
-    throw new Error(`Unable to get whatis: ${res.status}/${res.statusText}`)
-  }
-  return res.json()
-}).then(function(res) {
-  console.log(res)
-}).catch(function(error) {
-  console.error(error)
-  $('.error-text').text(error)
-  $('#error-modal').modal('toggle')
-})
-
       });
     </script>
     <script>
