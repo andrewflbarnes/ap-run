@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <title>Andrew and Penny Run: Sweepstake</title>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- custom site css -->
@@ -9,82 +10,11 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    <script>
-      var fetchSweepstakeEntries = function() {
-        var resOk = false
-        var resStatus = 0
-        fetch('{{API_URL}}/sweepstake', {
-          method: 'GET'
-        }).then(function(res) {
-          resOk = res.ok
-          resStatus = res.status
-          return res.json();
-        }).then(function(res) {
-          if (!resOk) {
-            throw new Error(`Unable to retrieve sweepstakes (${resStatus}): ${JSON.stringify(res)}`)
-          }
-
-          sorted = res.sort(function(a,b) {
-            return new Date('1970/01/01 ' + a.time) - new Date('1970/01/01 ' + b.time);
-          })
-
-          $('#sweepstake-entries').children('tr').remove()
-
-          sorted.forEach(function(entry) {
-            $('#sweepstake-entries').append(`
-              <tr>
-                <td scope="row">${entry.name}</td>
-                <td>${entry.runner}</td>
-                <td>${entry.time}</td>
-                <td>${entry.message}</td>
-              </tr>`
-            )
-          })
-        }).catch(function(error) {
-          $('.error-text').text(error)
-          $('#error-modal').modal('toggle')
-        })
-      }
-    </script>
+    <script src="ap-run.js"></script>
     <script>
       $(document).ready(function() {
         fetchSweepstakeEntries()
       });
-    </script>
-    <script>
-      function submitSweepstake() {
-        var formData = $("#sweepstake-form").serializeArray();
-        
-        var jsonData = {}
-        formData.forEach(function(entry) {
-          jsonData[entry.name] = entry.value
-        })
-
-        var resOk = false
-        var resStatus = 0
-        fetch('{{API_URL}}/sweepstake', {
-          method: 'POST',
-          body: JSON.stringify(jsonData),
-          headers: {
-            'content-type': 'application/json'
-          }
-        }).then(function(res) {
-          resOk = res.ok
-          resStatus = res.status
-          return res.json()
-        }).then(function(res) {
-          if (!resOk) {
-            throw new Error(`Unable to submit sweepstake (${resStatus}): ${JSON.stringify(res)}`)
-          }
-          $("#sweepstake-modal").modal('toggle')
-          fetchSweepstakeEntries()
-          console.log(res)
-        }).catch(function(error) {
-          $('.error-text').text(error)
-          $('#error-modal').modal('toggle')
-        })
-
-      }
     </script>
   </head>
   <body>
@@ -94,7 +24,12 @@
           <h1>26.2 Miles for Salcombe RNLI</h1>
         </div>
         <div>
-          <p>Please <a href="https://uk.virginmoneygiving.com/Team/PennyandAndrew">donate</a> to join the sweepstake.
+          <p>
+            Please <a href="https://uk.virginmoneygiving.com/Team/PennyandAndrew">donate</a> £5 or more to join the sweepstake (1 entry per donation).
+            Prizes are £25 for each of the closest times for Andrew and Penny.
+          </p>
+          <p>
+            Chip times will be used to determine the winners - the <a href='./'>homepage</a> will be updated with those times and the winners the day after we (hopefully!) finish.
           </p>
           <p>
             If you make a mistake or want to change your time, contact Andrew or Penny and they will fix it for you.
@@ -113,7 +48,7 @@
                   <th scope="col">Name</th>
                   <th scope="col">Runner</th>
                   <th scope="col">Time</th>
-                  <th scope="col">Message</th>
+                  <th class="d-none d-md-flex justify-content-center" scope="col">Message</th>
                 <tr>
               </thead>
               <tbody id="sweepstake-entries">

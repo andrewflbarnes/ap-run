@@ -10,7 +10,7 @@ cp -Rv src static
 
 echo "Replacing placeholders"
 
-for file in $(find static -name "*html")
+for file in $(find static -name "*js")
 do
   echo "Placeholder: API_URL -> $API_URL in $file"
   sed -i.delete '
