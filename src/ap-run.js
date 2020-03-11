@@ -24,7 +24,7 @@ var fetchSweepstakeEntries = function() {
           <td scope="row">${entry.name}</td>
           <td>${entry.runner}</td>
           <td>${entry.time}</td>
-          <td>${entry.message}</td>
+          <td class="d-none d-md-flex justify-content-center">${entry.message}</td>
         </tr>`
       )
     })
