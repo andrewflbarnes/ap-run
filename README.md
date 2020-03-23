@@ -21,10 +21,27 @@ At the moment this relies on penny-guess (pennyguess.com) to provide the /api/sw
 
 This is backed by the below DB table
 ```sql
-CREATE TABLE t_aprun_sweepstake
-( name      VARCHAR(255)    PRIMARY KEY NOT NULL
-, runner    VARCHAR(255)                NOT NULL
-, time      VARCHAR(8)                  NOT NULL
-, message   VARCHAR(255)
-);
+CREATE
+ TABLE t_aprun_sweepstake
+     ( id            SERIAL          PRIMARY KEY
+     , entry_time    TIMESTAMP       DEFAULT NOW()
+     , name          VARCHAR(255)    NOT NULL
+     , runner        VARCHAR(255)    NOT NULL
+     , time          VARCHAR(8)      NOT NULL
+     , message       VARCHAR(255)
+     , contact       VARCHAR(255)
+     , CONSTRAINT t_aprun_sweepstake_unq_name_runner UNIQUE (name, runner)
+     )
+;
+
+CREATE OR REPLACE
+  VIEW aprun_sweepstake AS
+SELECT t_aprun_sweepstake.id
+     , t_aprun_sweepstake.entry_time
+     , t_aprun_sweepstake.name
+     , t_aprun_sweepstake.runner
+     , t_aprun_sweepstake."time"
+     , t_aprun_sweepstake.message
+     , t_aprun_sweepstake.contact
+  FROM t_aprun_sweepstake
 ```
