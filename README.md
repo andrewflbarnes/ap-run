@@ -44,4 +44,5 @@ SELECT t_aprun_sweepstake.id
      , t_aprun_sweepstake.message
      , t_aprun_sweepstake.contact
   FROM t_aprun_sweepstake
+;
 ```
